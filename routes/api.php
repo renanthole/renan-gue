@@ -25,3 +25,11 @@ Route::prefix('users')->group(function() {
     Route::put('/edit/{user}', [App\Http\Controllers\UsersController::class, 'update']);
     Route::delete('/delete/{user}', [App\Http\Controllers\UsersController::class, 'destroy']);
 });
+
+Route::prefix('empresas')->group(function() {
+    Route::get('/', [App\Http\Controllers\EmpresasController::class, 'index']);
+    Route::get('/{empresas}', [App\Http\Controllers\EmpresasController::class, 'show']);
+    Route::post('/new', [App\Http\Controllers\EmpresasController::class, 'store']);
+    Route::put('/edit/{empresas}', [App\Http\Controllers\EmpresasController::class, 'update']);
+    Route::delete('/delete/{empresas}', [App\Http\Controllers\EmpresasController::class, 'destroy']);
+});
