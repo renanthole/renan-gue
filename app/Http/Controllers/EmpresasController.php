@@ -6,6 +6,7 @@ use App\Http\Requests\CreateEmpresasRequest;
 use App\Http\Resources\EmpresasResource;
 use App\Models\Empresas;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class EmpresasController extends Controller
 {
@@ -16,7 +17,7 @@ class EmpresasController extends Controller
      */
     public function index()
     {
-        return EmpresasResource::collection(Empresas::get());
+        return view('company.index', ['Empresas' => Empresas::get()]);
     }
 
     /**
@@ -26,7 +27,7 @@ class EmpresasController extends Controller
      */
     public function create()
     {
-        //
+        return view('company.new');
     }
 
     /**
@@ -35,13 +36,16 @@ class EmpresasController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateEmpresasRequest $request)
+    public function store(Request $request)
     {
-        return Empresas::create([
+        Empresas::create([
             'name' => $request->name,
             'cnpj' => $request->cnpj,
             'created_at' => now()
         ]);
+
+        Alert::toast("Cadastro inserido com sucesso", "success");
+        return redirect()->route('company.index');
     }
 
     /**
@@ -63,7 +67,7 @@ class EmpresasController extends Controller
      */
     public function edit(Empresas $empresas)
     {
-        //
+        return view('company.edit', compact('empresas'));
     }
 
     /**
@@ -75,11 +79,14 @@ class EmpresasController extends Controller
      */
     public function update(Request $request, Empresas $empresas)
     {
-        return $empresas->update([
+        $empresas->update([
             'name' => $request->name,
             'cnpj' => $request->cnpj,
             'updated_at' => now()
         ]);
+
+        Alert::toast("Cadastro alterado com sucesso", "success");
+        return redirect()->route('company.index');
     }
 
     /**
@@ -90,6 +97,7 @@ class EmpresasController extends Controller
      */
     public function destroy(Empresas $empresas)
     {
+        Alert::toast("Cadastro excluído com sucesso", "warning");
         return $empresas->delete();
     }
 }

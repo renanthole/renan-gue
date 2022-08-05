@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreateUsersRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class CreateUsersRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return Auth::check();
     }
 
     /**
@@ -29,7 +30,7 @@ class CreateUsersRequest extends FormRequest
             'phone' => ['nullable', 'string', 'min:3', 'max:15'],
             'birth_date' => ['nullable', 'date'],
             'city' => ['nullable', 'string', 'min:3', 'max:255'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 }

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUsersRequest;
 use App\Http\Resources\UsersResource;
+use App\Models\Empresas;
 use App\Models\User;
+use App\Models\UsersEmpresas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class UsersController extends Controller
 {
@@ -17,7 +20,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        return UsersResource::collection(User::get());
+        return view('users.index', ["Users" => User::get()]);
     }
 
     /**
@@ -27,7 +30,7 @@ class UsersController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.new');
     }
 
     /**
@@ -38,7 +41,7 @@ class UsersController extends Controller
      */
     public function store(CreateUsersRequest $request)
     {
-        return User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
@@ -47,6 +50,9 @@ class UsersController extends Controller
             'password' => Hash::make($request->password),
             'created_at' => now()
         ]);
+
+        Alert::toast("Cadastro inserido com sucesso", "success");
+        return redirect()->route('users.index');
     }
 
     /**
@@ -68,7 +74,7 @@ class UsersController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return view('users.edit', compact('user'), ["Empresas" => Empresas::get()]);
     }
 
     /**
@@ -80,15 +86,18 @@ class UsersController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        return $user->update([
+        $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'birth_date' => $request->birth_date,
             'city' => $request->city,
-            'password' => Hash::make($request->password),
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
             'updated_at' => now()
         ]);
+
+        Alert::toast("Cadastro alterado com sucesso", "success");
+        return redirect()->route('users.index');
     }
 
     /**
@@ -99,6 +108,22 @@ class UsersController extends Controller
      */
     public function destroy(User $user)
     {
-        return $user->delete();
+        $user->delete();
+        Alert::toast("Cadastro excluído com sucesso", "warning");
+        return redirect()->route('users.index');
+    }
+
+    public function userCompany(Request $request, User $user)
+    {
+        UsersEmpresas::firstOrCreate(['empresa_id' => $request->input("companies"), 'user_id' => $user->id], ['created_at' => now()]);
+        Alert::toast("Vinculo realizado com sucesso", "success");
+        return redirect()->route('users.edit', $user->id);
+    }
+
+    public function destroyUserCompany(Request $request, UsersEmpresas $user)
+    {
+        $user->delete();
+        Alert::toast("Cadastro excluído com sucesso", "warning");
+        return redirect()->route('users.edit', $user->id);
     }
 }

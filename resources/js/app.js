@@ -2,7 +2,8 @@ require('./bootstrap');
 window.Vue = require('vue').default;
 import Vue from 'vue';
 
-require('laravel-data-method');
+
+Vue.component('card-component', require('./components/CardComponent').default);
 
 new Vue({
     el: "#app"

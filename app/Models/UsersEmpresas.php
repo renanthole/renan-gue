@@ -13,4 +13,12 @@ class UsersEmpresas extends Model
         'user_id',
         'empresa_id'
     ];
+
+    public function empresa() {
+        return $this->belongsTo(Empresas::class);
+    }
+
+    public function usuario() {
+        return $this->belongsTo(User::class);
+    }
 }
